@@ -1,0 +1,15 @@
+<div class="jumbotron">
+    <div class="container">
+        <h1>Welcome to the Importer!</h1>
+        <p> There were {{setList.length}} sets found. </p>
+        <div id="sets" class="list-group">
+            {{#setList}}
+                <a href="#" class="list-group-item list-group-item-{{#imported}}success{{/imported}}{{^imported}}danger{{/imported}}">{{name}}
+                    <span class="glyphicon glyphicon-{{#imported}}saved{{/imported}}{{^imported}}exclamation-sign{{/imported}} pull-right" aria-hidden="true"></span></a>
+            {{/setList}}
+        </div>
+        {{^setList}}
+            Sorry, no sets were found.
+        {{/setList}}
+    </div>
+</div>
