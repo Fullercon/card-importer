@@ -1,0 +1,11 @@
+{
+  "name": "card-importer",
+  "description": "Node app for importing Yu-Gi-Oh! set and card data from an external REST API into a local MongoDB instance",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "express": "3.x",
+    "async": "0.1.x",
+    "mongodb": "1.2.x"
+  }
+}
