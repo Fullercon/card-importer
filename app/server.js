@@ -3,7 +3,8 @@ var app = express();
 
 var helpers = require('./handlers/helpers.js'),
 	pages = require('./handlers/pages.js'),
-	sets = require('./handlers/sets.js');
+	sets = require('./handlers/sets.js'),
+    database = require('./data/database');
 
 app.use(express.static(__dirname + "/../static"));
 
@@ -23,7 +24,15 @@ function four_oh_four(req, res){
     helpers.send_failure(res, 404, helpers.invalid_resource());
 }
 
-app.listen(8080);
+database.init(function(err, results){
+    if(err){
+        console.error("FATAL ERROR ON DB START UP: ");
+        console.error(err);
+        process.exit(-1);
+    }
+    console.log("Database initialised. Starting listening on port 8080...");
+    app.listen(8080);
+});
 
 
 

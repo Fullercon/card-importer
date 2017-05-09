@@ -4,7 +4,7 @@
 $(function(){
     var template, //main template html
         templateData = {}; //JSON data object that 'feeds' the template
-    console.log('Loading home template');
+    console.log('Loading sets template');
     //Initialise the page
     var initPage = function(){
 
