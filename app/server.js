@@ -8,7 +8,7 @@ var helpers = require('./handlers/helpers.js'),
 
 app.use(express.static(__dirname + "/../static"));
 
-
+//hello
 app.get('/v1/sets.json', sets.getAllSets);
 app.get('/pages/:page_name', pages.generate);
 
