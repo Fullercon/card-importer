@@ -1,0 +1,17 @@
+/*Effect monster*/
+db.cards.insert({
+  "_id": "Kuriboh_Common",
+  "name" : "Kuriboh",
+  "rarity": "Common",
+  "cardType": "Monster",
+  "text": "During your opponent's turn, at damage calculation: You can discard this card; you take no battle damage from that battle (this is a Quick Effect).",
+  "image": "Kuriboh.png",
+  "attack": 300,
+  "defence": 200,
+  "level": 1,
+  "attribute": "Dark",
+  "type": "Fiend",
+  "subType": "Effect",
+  "insertDate": "2016-06-11",
+  "updateDate": "2016-06-11"
+})

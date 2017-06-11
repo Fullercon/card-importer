@@ -1,0 +1,62 @@
+<div class="jumbotron">
+    <div class="container">
+        <h1>Card</h1>
+        {{#noResultsFound}}
+            <p>Sorry, this card does not exist in either the database or the Yu-Gi-Oh prices API.</p>
+        {{/noResultsFound}}
+        {{^noResultsFound}}
+            <p>
+                {{#fetchedFromDB}}
+                Card was found and loaded from database. Inserted: {{insertDate}}. Last updated: {{updateDate}}.
+                {{/fetchedFromDB}}
+                {{^fetchedFromDB}} Card was not found in database, loaded from API.{{/fetchedFromDB}}
+            </p>
+            <div id="cardInfo">
+                <div id="nameDiv">
+                    <b>Name: </b> {{name}}
+                </div>
+                <div id="cardTypeDiv">
+                    <b>Card Type:</b> {{cardType}}
+                </div>
+                <div id="textDiv">
+                    <b>Text:</b> {{text}}
+                </div>
+                <div id="imageDiv">
+                    <b>Image:</b> <img src="{{imageLocation}}" alt="Card Image" height="42" width="42">
+                </div>
+                {{#isSpellOrTrap}}
+                    <div id="propertyDiv">
+                        <b> Property:</b> {{property}}
+                    </div>
+                {{/isSpellOrTrap}}
+                {{^isSpellOrTrap}}
+                    <div id="attackDiv">
+                        <b>Attack:</b> {{attack}}
+                    </div>
+                    <div id="defenseDiv">
+                        <b>Defence:</b> {{defence}}
+                    </div>
+                    <div id="levelDiv">
+                        <b>Level:</b> {{level}}
+                    </div>
+                    <div id="attributeDiv">
+                        <b>Attribute:</b> {{attribute}}
+                    </div>
+                    <div id="typeDiv">
+                        <b>Type:</b> {{type}}
+                    </div>
+                    {{#subType}}
+                    <div id="subTypeDiv">
+                        <b>Sub-type:</b> {{subType}}
+                    </div>
+                    {{/subType}}
+                    {{#isComplexSubType}}
+                        <div id="conditionDiv">
+                            <b>Condition:</b> {{condition}}
+                        </div>
+                    {{/isComplexSubType}}
+                {{/isSpellOrTrap}}
+            </div>
+        {{/noResultsFound}}
+    </div>
+</div>
