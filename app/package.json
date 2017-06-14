@@ -6,7 +6,9 @@
   "dependencies": {
     "express": "3.x",
     "async": "0.1.x",
-    "mongodb": "3.4.4",
-    "request": "2.x"
+    "mongodb": "1.2.14",
+    "request": "2.x",
+    "fs-extra": "x.x.x",
+    "sanitize-filename": "x.x.x"
   }
 }

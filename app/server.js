@@ -8,13 +8,16 @@ var helpers = require('./handlers/helpers.js'),
     database = require('./data/database');
 
 app.use(express.static(__dirname + "/../static"));
+app.use(express.bodyParser());
 
 
 app.get('/v1/sets.json', sets.getAllSets);
 app.get('/v1/card/:cardName.json', card.getCardByName);
+app.put('/v1/import/cardImage.json', card.importCardImage);
+
+
 app.get('/pages/:page_name', pages.generate);
 app.get('/pages/:page_name/:sub_page', pages.generate);
-
 app.get('/', function(request, response){
 	response.redirect('pages/sets');
 	response.end();
@@ -36,6 +39,5 @@ database.init(function(err, results){
     console.log("Database initialised. Starting listening on port 8080...");
     app.listen(8080);
 });
-
 
 

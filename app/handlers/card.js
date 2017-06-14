@@ -2,17 +2,15 @@ var helpers = require('./helpers.js'),
     requestModule = require('request'),
     async = require('async'),
     cardData = require('../data/card.js'),
+    sanitize = require('sanitize-filename'),
+    fs = require('fs-extra'),
+    downloader = require('./imageDownloader.js'),
     config = require('../local.config.js');
 
 exports.version = "0.1.0";
 
 
 exports.getCardByName = function (request, responseToSend) {
-    //2. Look up the card in the database by its name
-    //3. If no results returned, look up via the API
-    //4. If no results returned from API, return some form of error
-    //5. If any results were found from either, manipulate them and send back
-
     if (!request.params || !request.params.cardName){
         console.log("No cardName parameter passed");
         var missingParamsError = helpers.missing_params();
@@ -54,6 +52,62 @@ exports.getCardByName = function (request, responseToSend) {
     );
 };
 
+exports.importCardImage = function (request, responseToSend) {
+
+    //1. Extract post parameters from request (cardName), validate they exist
+    //2. Convert cardName to a valid filename(so we can save it to a windows file system
+    //3. Verify if the image already exists in static/images
+    //4.If it doesn't, import it into the folder!
+
+    console.log("Importing card image!");
+
+    console.log(request);
+    if(!request.body || !request.body.cardName){
+        console.log("Missing parameters");
+        var missingParams = helpers.missing_data("cardName");
+        return helpers.send_failure(responseToSend, missingParams.code, missingParams);
+    }
+
+    console.log(request.body);
+    var cardName = request.body.cardName;
+
+    console.log("Stripping out invalid characters for a filename");
+    var validFilename = sanitize(cardName) + '.png';
+
+    var fullFilePath = '../static/images/' + validFilename;
+
+    async.waterfall(
+        [
+            function(callback){
+                console.log("Verifying if image " + validFilename + " already exists in directory...");
+                fs.pathExists(fullFilePath, callback);
+            },
+
+            function(fileExists, callback){
+                if(fileExists){
+                    console.log("Not importing as image already exists");
+                    var imageExistsError = helpers.image_exists_error();
+                    return callback(imageExistsError, null);
+                }
+                console.log("Downloading image from API as not in static/images directory");
+                downloader.downloadFile(config.config.base_api_url + 'card_image/' + cardName, fullFilePath, callback);
+            }
+        ],
+
+        function(err, results){
+            if(err){
+                console.log(err);
+                return helpers.send_failure(responseToSend, err.code, err);
+            }
+
+            if(results && results.status == "success"){
+                console.log("Image for " + cardName  + " was successfully saved as " + validFilename);
+                helpers.send_success(responseToSend, results);
+            }
+        }
+    );
+};
+
 function getCardByNameAPI(cardName, callback){
     requestModule(config.config.base_api_url + 'card_data/' + cardName, function (err, response, body) {
         if(err){
@@ -64,7 +118,7 @@ function getCardByNameAPI(cardName, callback){
             var bodyJSON = JSON.parse(body);
         } catch(exception){
             var jsonParseError = helpers.bad_json();
-            helpers.send_failure(responseToSend, jsonParseError.code, jsonParseError);
+            return helpers.send_failure(responseToSend, jsonParseError.code, jsonParseError);
         }
 
         var transformedSetData = null;
@@ -78,8 +132,6 @@ function getCardByNameAPI(cardName, callback){
     });
 }
 
-/*For each set returned, create a 'set' object with a name
-* and imported status. Defaulted to false initially */
 function transformCardData(data){
     var responseObject = {};
 
