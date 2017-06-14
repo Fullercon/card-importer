@@ -22,8 +22,16 @@ exports.invalid_resource = function() {
     return exports.make_error("invalid_resource", "the requested resource does not exist.");
 };
 
+exports.api_unavailable = function() {
+    return exports.make_error("api_unavailable", "the external api was not available at this time.");
+};
+
 exports.bad_json = function(){
     return exports.make_error("bad_json", "the data is not in a valid JSON format");
+};
+
+exports.missing_params = function(){
+    return exports.make_error("missing_params", "the request did not contain the necessary parameters to identify the resource.");
 };
 
 exports.missing_data = function(data_field){

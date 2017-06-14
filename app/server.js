@@ -4,13 +4,16 @@ var app = express();
 var helpers = require('./handlers/helpers.js'),
 	pages = require('./handlers/pages.js'),
 	sets = require('./handlers/sets.js'),
+    card = require('./handlers/card.js'),
     database = require('./data/database');
 
 app.use(express.static(__dirname + "/../static"));
 
 //hello
 app.get('/v1/sets.json', sets.getAllSets);
+app.get('/v1/card/:cardName.json', card.getCardByName);
 app.get('/pages/:page_name', pages.generate);
+app.get('/pages/:page_name/:sub_page', pages.generate);
 
 app.get('/', function(request, response){
 	response.redirect('pages/sets');
