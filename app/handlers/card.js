@@ -90,6 +90,7 @@ function transformCardData(data){
     responseObject.isSpellOrTrap = ((data.cardType == "Spell") || (data.cardType == "Trap"));
     responseObject.insertDate = data.insertDate;
     responseObject.updateDate = data.updateDate;
+    responseObject.imageName = data.imageName ? data.imageName : "DefaultImage.png";
 
     if(responseObject.isSpellOrTrap){
         /*Common to spells and traps only*/
@@ -98,7 +99,7 @@ function transformCardData(data){
         /*Common to monsters only*/
         responseObject.attack = data.attack;
         responseObject.defence = data.defence;
-        responseObject.level = data.level;
+        responseObject.levels = generateLevelArray(data.level);
         responseObject.attribute = data.attribute;
         responseObject.type = data.type;
         responseObject.subType = data.subType;
@@ -123,6 +124,7 @@ function transformCardDataAPI(data){
     responseObject.cardType = data.card_type;
     responseObject.text = data.text;
     responseObject.isSpellOrTrap = ((data.card_type == "Spell") || (data.card_type == "Trap"));
+    responseObject.imageName = "DefaultImage.png";
 
     if(responseObject.isSpellOrTrap){
         /*Common to spells and traps only*/
@@ -132,12 +134,16 @@ function transformCardDataAPI(data){
         data.family = capitalizeFirstLetter(data.family);
         responseObject.attack = data.atk;
         responseObject.defence = data.def;
-        responseObject.level = data.level;
+        responseObject.levels = generateLevelArray(data.level);
         responseObject.attribute = data.family;
 
         var typeSplits = data.type.split(' / ');
         responseObject.type = typeSplits[0];
         responseObject.subType = typeSplits[1];
+
+        if(typeSplits[1] == undefined){
+            responseObject.subType = "Normal";
+        }
 
         responseObject.isComplexSubType = isSubTypeComplex(typeSplits[1]);
         if(responseObject.isComplexSubType){
@@ -153,6 +159,14 @@ function transformCardDataAPI(data){
 /*Helper methods*/
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function generateLevelArray(levelNumber){
+    var levelArray = [];
+    for(i = 1 ; i <= levelNumber; i++){
+        levelArray.push(i);
+    }
+    return levelArray;
 }
 
 function getConditionFromCardText(cardText, subtype) {

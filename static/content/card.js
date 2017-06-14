@@ -19,6 +19,7 @@ $(function(){
 
         //Retrieve the server data and then initialise the page
         $.getJSON("/v1/card/" + cardName + ".json", function(d){
+            console.log(d.data);
             $.extend(templateData, d.data);
         });
 

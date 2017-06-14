@@ -1,62 +1,93 @@
 <div class="jumbotron">
     <div class="container">
-        <h1>Card</h1>
-        {{#noResultsFound}}
-            <p>Sorry, this card does not exist in either the database or the Yu-Gi-Oh prices API.</p>
-        {{/noResultsFound}}
-        {{^noResultsFound}}
+        <form class="form-horizontal paddingTest">
+            <h1>{{name}}  <span class="glyphicon glyphicon-lock" aria-hidden="true"></span></h1>
+            {{#noResultsFound}}
+                <p>Sorry, this card does not exist in either the database or the Yu-Gi-Oh prices API.</p>
+            {{/noResultsFound}}
+            {{^noResultsFound}}
             <p>
                 {{#fetchedFromDB}}
                 Card was found and loaded from database. Inserted: {{insertDate}}. Last updated: {{updateDate}}.
                 {{/fetchedFromDB}}
                 {{^fetchedFromDB}} Card was not found in database, loaded from API.{{/fetchedFromDB}}
             </p>
-            <div id="cardInfo">
-                <div id="nameDiv">
-                    <b>Name: </b> {{name}}
+
+            <div class="row">
+                <div class="col-md-3 col-md-offset-1 image-container">
+                    <img src="../../images/{{imageName}}" height="300px" width="200px"/>
                 </div>
-                <div id="cardTypeDiv">
-                    <b>Card Type:</b> {{cardType}}
+
+                <div class="row col-md-8">
+                    <label for="card-type" class="col-md-2 control-label">Card Type:</label>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control custom-read-only" id="card-type" value="{{cardType}}" readonly>
+                    </div>
                 </div>
-                <div id="textDiv">
-                    <b>Text:</b> {{text}}
+
+                <div class="row col-md-8">
+                    <label for="card-text" class="col-md-2 control-label">Description:</label>
+                    <div class="col-md-8">
+                        <textarea class="form-control custom-read-only" rows="5" id="card-text" readonly>{{text}}</textarea>
+                    </div>
                 </div>
-                <div id="imageDiv">
-                    <b>Image:</b> <img src="{{imageLocation}}" alt="Card Image" height="42" width="42">
-                </div>
+
                 {{#isSpellOrTrap}}
-                    <div id="propertyDiv">
-                        <b> Property:</b> {{property}}
+                    <div class="row col-md-8">
+                        <label for="card-property" class="col-md-2 control-label">Property: </label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control custom-read-only" id="card-property" value="{{property}}" readonly>
+                        </div>
                     </div>
                 {{/isSpellOrTrap}}
                 {{^isSpellOrTrap}}
-                    <div id="attackDiv">
-                        <b>Attack:</b> {{attack}}
+                    <div class="row col-md-8">
+                        <label for="card-level" class="col-md-2 control-label">Level: </label>
+                        <div class="col-md-4">
+                            {{#levels}}
+                                <img src="../../images/CardLevel.png" height="20px" width="20px"/>
+                            {{/levels}}
+                        </div>
+                        <label for="card-attribute" class="col-md-2 control-label">Attribute:</label>
+                        <div class="col-md-2">
+                            <input type="text" class="form-control custom-read-only" id="card-attribute" value="{{attribute}}" readonly>
+                        </div>
                     </div>
-                    <div id="defenseDiv">
-                        <b>Defence:</b> {{defence}}
+                    <div class="row col-md-8">
+                        <label for="type" class="col-md-2 control-label">Type:</label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control custom-read-only" id="type" value="{{type}}" readonly>
+                        </div>
+                        {{#subType}}
+                            <label for="card-subtype" class="col-md-2 control-label">Sub-Type:</label>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control custom-read-only" id="card-subtype" value="{{subType}}" readonly>
+                            </div>
+                        {{/subType}}
                     </div>
-                    <div id="levelDiv">
-                        <b>Level:</b> {{level}}
+
+                    <div class="row col-md-8">
+                        <label for="card-attack" class="col-md-2 control-label">Attack:</label>
+                        <div class="col-md-3">
+                            <input type="email" class="form-control custom-read-only" id="card-attack" value="{{attack}}" readonly>
+                        </div>
+                        <label for="card-defence" class="col-md-2 control-label">Defence:</label>
+                        <div class="col-md-3">
+                            <input type="email" class="form-control custom-read-only" id="card-defence" value="{{defence}}" readonly>
+                        </div>
                     </div>
-                    <div id="attributeDiv">
-                        <b>Attribute:</b> {{attribute}}
-                    </div>
-                    <div id="typeDiv">
-                        <b>Type:</b> {{type}}
-                    </div>
-                    {{#subType}}
-                    <div id="subTypeDiv">
-                        <b>Sub-type:</b> {{subType}}
-                    </div>
-                    {{/subType}}
+
                     {{#isComplexSubType}}
-                        <div id="conditionDiv">
-                            <b>Condition:</b> {{condition}}
+                        <div class="row col-md-8">
+                            <label for="card-condition" class="col-md-2 control-label">Condition:</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control custom-read-only" id="card-condition" value="{{condition}}" readonly>
+                            </div>
                         </div>
                     {{/isComplexSubType}}
                 {{/isSpellOrTrap}}
             </div>
+        </form>
         {{/noResultsFound}}
     </div>
 </div>
