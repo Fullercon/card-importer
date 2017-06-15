@@ -11,7 +11,6 @@ exports.getAllSets = function (request, responseToSend) {
             helpers.send_failure(responseToSend, response.statusCode? response.statusCode : 500, err);
             return;
         }
-
         try{
             var bodyJSON = JSON.parse(body);
         } catch(exception){
