@@ -18,7 +18,9 @@ exports.getAllSets = function (request, responseToSend) {
             var jsonParseError = helpers.bad_json();
             helpers.send_failure(responseToSend, jsonParseError.code, jsonParseError);
         }
+
         var transformedSetData = transformSetData(bodyJSON);
+
         compareWithDB(transformedSetData, function(err, dbVerifiedData){
             if(err){
                 helpers.send_failure(responseToSend, response.statusCode? response.statusCode : 500, err);
