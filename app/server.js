@@ -11,6 +11,7 @@ app.use(express.static(__dirname + "/../static"));
 app.use(express.bodyParser());
 
 //hello
+console.log('test');
 app.get('/v1/sets.json', sets.getAllSets);
 app.get('/v1/card/:cardName.json', card.getCardByName);
 app.put('/v1/import/cardImage.json', card.importCardImage);
@@ -19,6 +20,7 @@ app.put('/v1/import/cardImage.json', card.importCardImage);
 app.get('/pages/:page_name', pages.generate);
 app.get('/pages/:page_name/:sub_page', pages.generate);
 app.get('/', function(request, response){
+    console.log('hello');
 	response.redirect('pages/sets');
 	response.end();
 });
