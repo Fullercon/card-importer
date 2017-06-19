@@ -7,20 +7,18 @@
     padding-top: 20px;
 }
 
-.no-top-padding{
-    padding-top:0px !important;
+.no-top-padding {
+    padding-top: 0px !important;
 }
 
-.custom-read-only {
+.custom-read-only
+{
     background-color:transparent !important;
     border:1px solid lightgrey; !important;
-    box-shadow: 5px 5px 7px rgba(136, 136, 136, 0.36);
+    box-shadow: 5px 5px 7px rgba(136, 136, 136, 0.36) !important;
 }
 
-.glyphicon-lock{
-    color: crimson;
-    font-size: 40px;
-}
+/*.btn.dropdown-toggle */
 
 .form-control:hover {
     border-color: #66afe9;
@@ -36,7 +34,6 @@
 #card-details{
     padding:20px;
     padding-top:30px;
-    padding-bottom: 65px;
 }
 
 .title-row{
@@ -48,10 +45,15 @@
     border-radius: 5px;
 }
 
+.subtitle-row{
+    padding-bottom: 10px !important;
+    padding-top:10px !important;
+}
+
 /*Card flipping*/
 .card {
     position: relative;
-    height: 40rem;
+    height: 300px;
     perspective: 200rem;
 }
 
@@ -79,3 +81,49 @@
 #intro-card , #perm-card{
     padding-top:20px;
 }
+
+/*CSS for switching between readonly and editable form*/
+#lock-icon{
+    color: #f58d1f ;
+}
+
+#lock-icon:active{
+    color: #b55b1e;
+}
+
+#unlock-icon{
+    color: #ff2549;
+}
+
+#unlock-icon:active{
+    color: #c22338;
+}
+
+#unlock-icon{
+    display:none;
+}
+
+.btn.disabled{
+    cursor:default !important;
+}
+
+.bootstrap-select .caret {
+    display: none;
+}
+
+.disabled.btn-default {
+    background-color:transparent !important;
+    border:1px solid lightgrey; !important;
+    box-shadow: 5px 5px 7px rgba(136, 136, 136, 0.36) !important;
+    opacity: 1 !important;
+}
+
+.disabled.form-control {
+    background-color:transparent !important;
+    opacity: 1 !important;
+}
+
+table{
+    margin-top:15px;
+}
+

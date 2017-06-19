@@ -28,6 +28,7 @@ $(function(){
         $(document).ajaxStop(function(){
             var renderedPage = Mustache.to_html(template, templateData);
             $("body").html(renderedPage);
+            $(".container").fadeIn('slow');
         });
     }();
 });
