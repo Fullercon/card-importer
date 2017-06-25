@@ -2,15 +2,18 @@
 var fs = require('fs');
 
 exports.verify = function (data, field_names) {
+    console.log('back_up');
     for (var i = 0; i < field_names.length; i++) {
+        console.log(field_names[i]);
+        console.log(data[field_names[i]]);
         if (!data[field_names[i]]) {
             throw exports.error("missing_data",
                                 field_names[i] + " not optional");
         }
     }
-
+    console.log('allData');
     return true;
-}
+};
 
 exports.error = function (code, message) {
     var e = new Error(message);
@@ -71,7 +74,8 @@ exports.file_copy = function () {
 
 
 exports.validSetName = function (sn) {
-    var re = /[^\.a-zA-Z0-9_-]/;
+    console.log('sn');
+    var re = /[^\.a-zA-Z0-9!' _:&-]/;
     return typeof sn == 'string' && sn.length > 0 && !(sn.match(re));
 };
 

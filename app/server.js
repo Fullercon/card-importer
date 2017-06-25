@@ -5,7 +5,8 @@ var helpers = require('./handlers/helpers.js'),
 	pages = require('./handlers/pages.js'),
 	sets = require('./handlers/sets.js'),
     card = require('./handlers/card.js'),
-    database = require('./data/database');
+    database = require('./data/database'),
+    set = require('./handlers/set.js');
 
 app.use(express.static(__dirname + "/../static"));
 app.use(express.bodyParser());
@@ -13,12 +14,14 @@ app.use(express.bodyParser());
 //hello
 console.log('test');
 app.get('/v1/sets.json', sets.getAllSets);
+app.get('/v1/set/:setName.json', set.getSetByName);
+
 app.get('/v1/card/:cardName.json', card.getCardByName);
 app.put('/v1/import/cardImage.json', card.importCardImage);
 
-
 app.get('/pages/:page_name', pages.generate);
 app.get('/pages/:page_name/:sub_page', pages.generate);
+
 app.get('/', function(request, response){
     console.log('hello');
 	response.redirect('pages/sets');

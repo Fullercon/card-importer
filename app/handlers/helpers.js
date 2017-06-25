@@ -10,6 +10,7 @@ exports.send_success = function(response, data){
     var output = {error: null, data:data};
     response.writeHead(200, {"Content-Type" : "application/json"});
     response.end(JSON.stringify(output) + "\n");
+    console.log('success')
 };
 
 exports.send_failure = function(response, code, err){

@@ -1,0 +1,54 @@
+<div class="jumbotron">
+    <div class="container">
+        <form class="form-horizontal paddingTest">
+            <h1>{{_id}}  <span class="glyphicon glyphicon-lock" aria-hidden="true"></span></h1>
+            <p>
+                {{#fetchedFromDB}}
+                Set was found and loaded from database. Inserted: {{insertDate}}. Last updated: {{updateDate}}.
+                {{/fetchedFromDB}}
+                {{^fetchedFromDB}} Set was not found in database, loaded from API. Inserted: {{insertDate}}.{{/fetchedFromDB}}
+            </p>
+            <div class="row">
+                <div class="row col-md-8">
+                    <label for="totalCards" class="col-md-2 control-label">Total Cards:</label>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control custom-read-only" id="totalCards" value="{{totalCards}}" readonly>
+                    </div>
+                </div>
+                <div class="row col-md-8">
+                    <h3>Rarities:</h3>
+                        {{#rarities}}
+                            <label class="col-md-2 control-label">{{rarity}}</label>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control custom-read-only" class="rarities" value="{{number}}" readonly>
+                            </div>
+                        {{/rarities}}
+                        {{^rarities}}
+                            There are no cards in this sets.
+                        {{/rarities}}
+                    </ul>
+                </div>
+
+                <div class="row col-md-12">
+                    <h3>Cards:</h3>
+                    {{#cards}}
+                    <div class="row col-md-12 list-group-item list-group-item-{{#imported}}success{{/imported}}{{^imported}}danger{{/imported}}">
+                        <label class="col-md-1 control-label">Name:</label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control custom-read-only" class="cardName" value="{{cardName}}" readonly>
+                        </div>
+                        <label class="col-md-1 control-label">Rarity:</label>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control custom-read-only" class="cardRarity" value="{{rarity}}" readonly>
+                        </div>
+                        <a href="/pages/card/{{cardName}}" class="col-md-2">View Card</a>
+                    </div>
+                    {{/cards}}
+                    {{^cards}}
+                    There are no cards in this sets.
+                    {{/cards}}
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

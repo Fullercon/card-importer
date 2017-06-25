@@ -4,7 +4,7 @@
         <p> There were {{setList.length}} sets found. </p>
         <div id="sets" class="list-group">
             {{#setList}}
-                <a href="#" class="list-group-item list-group-item-{{#imported}}success{{/imported}}{{^imported}}danger{{/imported}}">{{name}}
+                <a href="/pages/set/{{_id}}.html" class="list-group-item list-group-item-{{#imported}}success{{/imported}}{{^imported}}danger{{/imported}}">{{_id}}
                     <span class="glyphicon glyphicon-{{#imported}}saved{{/imported}}{{^imported}}exclamation-sign{{/imported}} pull-right" aria-hidden="true"></span></a>
             {{/setList}}
         </div>

@@ -4,10 +4,12 @@ var helpers = require('./helpers.js'),
 exports.version = "0.1.0";
 
 exports.generate = function (request, response) {
+    console.log(request.params);
 
     var page = get_page_name(request);
+    var subPage = getSubPageName(request);
 
-    console.log('Attempting to serve '+ page +' page');
+    console.log('Attempting to serve '+ page +' page ' + subPage);
 
     //Read file reads entire contents of a file into a buffer, which needs to then be converted into a string
     fs.readFile(
@@ -29,4 +31,8 @@ exports.generate = function (request, response) {
 
 function get_page_name(req) {
     return req.params.page_name;
+}
+
+function getSubPageName(req) {
+    return req.params.sub_page;
 }
