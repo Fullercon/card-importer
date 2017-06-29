@@ -142,7 +142,7 @@ function transformCardData(data){
     responseObject.isSpellOrTrap = ((data.cardType == "Spell") || (data.cardType == "Trap"));
     responseObject.insertDate = data.insertDate;
     responseObject.updateDate = data.updateDate;
-    responseObject.imageName = data.imageName ? data.imageName : "DefaultImage.png";
+    responseObject.imageName = data.imageName ? data.imageName : "Blue-Eyes White Dragon.png";
 
     if(responseObject.isSpellOrTrap){
         /*Common to spells and traps only*/

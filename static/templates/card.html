@@ -1,84 +1,196 @@
+<script>
+    $(function(){
+
+        $(".selectpicker").selectpicker();
+
+        $("#card-attribute").val("{{attribute}}");
+        $("#card-type").val("{{cardType}}");
+        $("#type").val("{{type}}");
+        $("#card-subtype").val("{{subType}}");
+        $(".selectpicker").selectpicker('refresh');
+
+        $("#lock-icon").on("click", function(){
+            var formFields = $("input, textarea");
+            $("#lock-icon").toggle();
+            $("#unlock-icon").toggle();
+            formFields.toggleClass("custom-read-only");
+            formFields.attr("readonly", false);
+
+            /*Custom css styling for selectpickers*/
+            $(".selectpicker").prop('disabled', false);
+            $(".bootstrap-select .caret").show();
+            $(".selectpicker").selectpicker('refresh');
+        });
+
+        $("#unlock-icon").on("click", function(){
+            var formFields = $("input, textarea");
+            $("#unlock-icon").toggle();
+            $("#lock-icon").toggle();
+            formFields.toggleClass("custom-read-only");
+            formFields.attr("readonly", true);
+
+            /*Custom css styling for selectpickers*/
+            $(".selectpicker").prop('disabled', true);
+            $(".bootstrap-select .caret").hide();
+            $(".selectpicker").selectpicker('refresh');
+        });
+
+       setTimeout(function(){
+            $("#intro-card .front").addClass("frontSpin");
+            $("#intro-card .back").addClass("backSpin");
+
+            $(".front").on('transitionend webkitTransitionEnd oTransitionEnd otransitionend MSTransitionEnd',
+                function() {
+                    $("#intro-card").remove();
+                    $("#perm-card").show();
+                    $("#front_card").addClass("front_hover");
+                    $("#back_card").addClass("back_hover");
+                }
+            );
+        }, 1500);
+    })
+</script>
+
 <div class="jumbotron">
-    <div class="container">
+    <div class="container" hidden>
         <form class="form-horizontal paddingTest">
-            <h1>{{name}}  <span class="glyphicon glyphicon-lock" aria-hidden="true"></span></h1>
+
             {{#noResultsFound}}
                 <p>Sorry, this card does not exist in either the database or the Yu-Gi-Oh prices API.</p>
             {{/noResultsFound}}
             {{^noResultsFound}}
-            <p>
-                {{#fetchedFromDB}}
-                Card was found and loaded from database. Inserted: {{insertDate}}. Last updated: {{updateDate}}.
-                {{/fetchedFromDB}}
-                {{^fetchedFromDB}} Card was not found in database, loaded from API.{{/fetchedFromDB}}
-            </p>
-
-            <div class="row">
-                <div class="col-md-3 col-md-offset-1 image-container">
-                    <img src="../../images/{{imageName}}" height="300px" width="200px"/>
-                </div>
-
-                <div class="row col-md-8">
-                    <label for="card-type" class="col-md-2 control-label">Card Type:</label>
-                    <div class="col-md-3">
-                        <input type="text" class="form-control custom-read-only" id="card-type" value="{{cardType}}" readonly>
+            <div class="title-row">
+                <h1>{{name}} <i id="lock-icon" class="fa fa-lock"></i><i id="unlock-icon" class="fa fa-unlock-alt"></i></h1>
+                {{^isSpellOrTrap}}
+                <div class="row header-row">
+                    <div class="col-md-5">
+                        {{#levels}}
+                            <img  src="../../images/CardLevel.png" height="30px" width="30px"/>
+                        {{/levels}}
+                    </div>
+                    <div class="col-md-7">
+                        <label for="card-attribute" class="col-md-2 col-md-offset-5 control-label">Attribute:</label>
+                        <div class="col-md-3">
+                            <select id="card-attribute" class="selectpicker form-control disabled" disabled>
+                           <!--     <option data-content='<span class="pull-right pad-right">Light &nbsp; <img src="../../images/lightAttribute.png"/ height="20px" width="20px"></span>' value="Light"></option>
+                                <option data-content='<span class="pull-right pad-right">Dark &nbsp; <img src="../../images/darkAttribute.png"/ height="20px" width="20px"></span>' value="Dark"></option>
+                                <option data-content='<span class="pull-right pad-right">Earth &nbsp; <img src="../../images/earthAttribute.png"/ height="20px" width="20px"></span>' value="Earth"></option>
+                                <option data-content='<span class="pull-right pad-right">Water &nbsp; <img src="../../images/waterAttribute.png"/ height="20px" width="20px"></span>' value="Water"></option>
+                                <option data-content='<span class="pull-right pad-right">Wind &nbsp; <img src="../../images/windAttribute.png"/ height="20px" width="20px"></span>' value="Wind"></option>
+                                <option data-content='<span class="pull-right pad-right">Fire &nbsp; <img src="../../images/fireAttribute.png"/ height="20px" width="20px"></span>' value="Fire"></option>&ndash;&gt;-->
+                                <option data-thumbnail="../../images/lightAttribute.png" value="Light">Light</option>
+                                <option data-thumbnail="../../images/darkAttribute.png" value="Dark">Dark</option>
+                                <option data-thumbnail="../../images/fireAttribute.png" value="Fire">Fire</option>
+                                <option data-thumbnail="../../images/waterAttribute.png" value="Water">Water</option>
+                                <option data-thumbnail="../../images/earthAttribute.png" value="Earth">Earth</option>
+                                <option data-thumbnail="../../images/windAttribute.png" value="Wind">Wind</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
+            {{/isSpellOrTrap}}
+            </div>
 
-                <div class="row col-md-8">
+            <div id="card-details" class="row">
+                <div id="intro-card" class="card col-md-3 col-md-offset-1">
+                    <div class="back">
+                        <span><img src="../../images/Blue-Eyes White Dragon.png" height="300px" width="200px"/></span>
+                    </div>
+                    <div class="front">
+                        <span><img src="../../images/DefaultImage.png" height="300px" width="200px"/></span>
+                    </div>
+                </div>
+                <div id="perm-card" class="card col-md-3 col-md-offset-1" hidden>
+                    <div id="front_card" class="front">
+                        <span><img src="../../images/Blue-Eyes White Dragon.png" height="300px" width="200px"/></span>
+                    </div>
+                    <div id="back_card" class="back">
+                        <span><img src="../../images/DefaultImage.png" height="300px" width="200px"/></span>
+                    </div>
+                </div>
+                <div class="row col-md-offset-1 col-md-7">
+                    <label for="card-type" class="col-md-2 control-label">Card Type:</label>
+                    <div class="col-md-3">
+                        <select id="card-type" class="selectpicker form-control disabled" disabled>
+                            <option value="Monster">Monster</option>
+                            <option value="Spell">Spell</option>
+                            <option value="Trap">Trap</option>
+                        </select>
+                    </div>
+                    {{#isSpellOrTrap}}
+                        <label for="card-property" class="col-md-2 control-label">Property: </label>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control custom-read-only" id="card-property" value="{{property}}" readonly>
+                        </div>
+                    {{/isSpellOrTrap}}
+                </div>
+
+                {{^isSpellOrTrap}}
+                <div class="row col-md-offset-1 col-md-7">
+                    <label for="type" class="col-md-2 control-label">Type:</label>
+                    <div class="col-md-3">
+                        <select id="type" class="selectpicker form-control disabled" disabled>
+                            <option value="Aqua">Aqua</option>
+                            <option value="Divine Beast">Divine Beast</option>
+                            <option value="Machine">Machine</option>
+                            <option value="Spellcaster">Spellcaster</option>
+                            <option value="Warrior">Warrior</option>
+                            <option value="Pyro">Pyro</option>
+                            <option value="Dinosaur">Dinosaur</option>
+                            <option value="Insect">Insect</option>
+                            <option value="Dragon">Dragon</option>
+                            <option value="Fiend">Fiend</option>
+                            <option value="Fairy">Fairy</option>
+                            <option value="Beast">Beast</option>
+                            <option value="Winged-Beast">Winged-Beast</option>
+                            <option value="Beast-Warrior">Beast-Warrior</option>
+                            <option value="Plant">Plant</option>
+                            <option value="Reptile">Reptile</option>
+                            <option value="Psychic">Psychic</option>
+                            <option value="Rock">Rock</option>
+                            <option value="Fish">Fish</option>
+                            <option value="Sea Serpent">Sea serpent</option>
+                            <option value="Thunder">Thunder</option>
+                            <option value="Wyrm">Wyrm</option>
+                            <option value="Zombie">Zombie</option>
+                        </select>
+                    </div>
+                    {{#subType}}
+                    <label for="card-subtype" class="col-md-2 control-label">Sub-Type:</label>
+                    <div class="col-md-3">
+                        <select id="card-subtype" class="selectpicker form-control disabled" disabled>
+                            <option value="Fusion">Fusion</option>
+                            <option value="Effect">Effect</option>
+                            <option value="Pendulum">Pendulum</option>
+                            <option value="Synchro">Synchro</option>
+                            <option value="Xyz">Xyz</option>
+                        </select>
+                    </div>
+                    {{/subType}}
+                </div>
+                {{/isSpellOrTrap}}
+
+                <div class="row col-md-offset-1 col-md-7">
                     <label for="card-text" class="col-md-2 control-label">Description:</label>
                     <div class="col-md-8">
                         <textarea class="form-control custom-read-only" rows="5" id="card-text" readonly>{{text}}</textarea>
                     </div>
                 </div>
 
-                {{#isSpellOrTrap}}
-                    <div class="row col-md-8">
-                        <label for="card-property" class="col-md-2 control-label">Property: </label>
-                        <div class="col-md-4">
-                            <input type="text" class="form-control custom-read-only" id="card-property" value="{{property}}" readonly>
-                        </div>
-                    </div>
-                {{/isSpellOrTrap}}
                 {{^isSpellOrTrap}}
-                    <div class="row col-md-8">
-                        <label for="card-level" class="col-md-2 control-label">Level: </label>
-                        <div class="col-md-4">
-                            {{#levels}}
-                                <img src="../../images/CardLevel.png" height="20px" width="20px"/>
-                            {{/levels}}
-                        </div>
-                        <label for="card-attribute" class="col-md-2 control-label">Attribute:</label>
-                        <div class="col-md-2">
-                            <input type="text" class="form-control custom-read-only" id="card-attribute" value="{{attribute}}" readonly>
-                        </div>
-                    </div>
-                    <div class="row col-md-8">
-                        <label for="type" class="col-md-2 control-label">Type:</label>
-                        <div class="col-md-4">
-                            <input type="text" class="form-control custom-read-only" id="type" value="{{type}}" readonly>
-                        </div>
-                        {{#subType}}
-                            <label for="card-subtype" class="col-md-2 control-label">Sub-Type:</label>
-                            <div class="col-md-2">
-                                <input type="text" class="form-control custom-read-only" id="card-subtype" value="{{subType}}" readonly>
-                            </div>
-                        {{/subType}}
-                    </div>
-
-                    <div class="row col-md-8">
+                    <div class="row col-md-offset-1 col-md-7">
                         <label for="card-attack" class="col-md-2 control-label">Attack:</label>
                         <div class="col-md-3">
-                            <input type="email" class="form-control custom-read-only" id="card-attack" value="{{attack}}" readonly>
+                            <input type="number" class="form-control custom-read-only" id="card-attack" value="{{attack}}" readonly>
                         </div>
                         <label for="card-defence" class="col-md-2 control-label">Defence:</label>
                         <div class="col-md-3">
-                            <input type="email" class="form-control custom-read-only" id="card-defence" value="{{defence}}" readonly>
+                            <input type="number" class="form-control custom-read-only" id="card-defence" value="{{defence}}" readonly>
                         </div>
                     </div>
 
                     {{#isComplexSubType}}
-                        <div class="row col-md-8">
+                        <div class="row col-md-offset-1 col-md-7">
                             <label for="card-condition" class="col-md-2 control-label">Condition:</label>
                             <div class="col-md-8">
                                 <input type="text" class="form-control custom-read-only" id="card-condition" value="{{condition}}" readonly>
@@ -87,6 +199,52 @@
                     {{/isComplexSubType}}
                 {{/isSpellOrTrap}}
             </div>
+            <div id="set-details">
+                <div class="row">
+                    <div class="col-md-12 title-row subtitle-row">
+                        <h2>Appears in:</h2>
+                    </div>
+                    <div class="col-md-12">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Set Name:</th>
+                                    <th>Set Code:</th>
+                                    <th>Rarity:</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Zombie World</td>
+                                    <td>SP50-SBK</td>
+                                    <td>Rare</td>
+                                </tr>
+                                <tr>
+                                    <td>Zombie World</td>
+                                    <td>SP50-SBK</td>
+                                    <td>Rare</td>
+                                </tr>
+                                <tr>
+                                    <td>Zombie World</td>
+                                    <td>SP50-SBK</td>
+                                    <td>Rare</td>
+                                </tr>
+                                <tr>
+                                    <td>Zombie World</td>
+                                    <td>SP50-SBK</td>
+                                    <td>Rare</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <p>
+                {{#fetchedFromDB}}
+                Card was found and loaded from database. Inserted: {{insertDate}}. Last updated: {{updateDate}}.
+                {{/fetchedFromDB}}
+                {{^fetchedFromDB}} Card was not found in database, loaded from API.{{/fetchedFromDB}}
+            </p>
         </form>
         {{/noResultsFound}}
     </div>
