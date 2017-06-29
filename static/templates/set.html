@@ -1,7 +1,7 @@
 <div class="jumbotron">
     <div class="container">
         <form class="form-horizontal paddingTest">
-            <h1>{{_id}}  <span class="glyphicon glyphicon-lock" aria-hidden="true"></span></h1>
+            <h1>{{_id}}  <span id="setLock" class="glyphicon glyphicon-lock" aria-hidden="true"></span></h1>
             <p>
                 {{#fetchedFromDB}}
                 Set was found and loaded from database. Inserted: {{insertDate}}. Last updated: {{updateDate}}.

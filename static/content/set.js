@@ -31,3 +31,16 @@ $(function(){
         });
     }();
 });
+
+$('#setLock').on('click', function () {
+    const $this = $(this);
+    if (/glyphicon-lock/i.test($this.selector)) {
+        $this.removeClass('glyphicon-lock');
+        $this.addClass('glyphicon-unlock');
+        $('input').prop('disabled', false);
+    } else {
+        $this.removClass('glyphicon-unlock');
+        $this.addClass('glyphicon-lock');
+        $('input').prop('disabled', true);
+    }
+});
