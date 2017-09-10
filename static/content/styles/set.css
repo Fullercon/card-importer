@@ -1,0 +1,55 @@
+#submitChangesSet {
+    display: none;
+}
+
+.row {
+    padding: 10px !important;
+}
+.setCard {
+    margin-bottom: 10px;
+}
+
+.viewCard, .removeCard{
+    min-height: 20px !important;
+}
+
+#plusButton {
+    background: url('../../images/plusButton.png') no-repeat center;
+    background-size: contain;
+    height: 2.5em;
+    cursor: pointer;
+}
+
+.removeButton {
+    display:inline-block;
+    color:#444;
+    border:1px solid #CCC;
+    background:#DDD;
+    box-shadow: 0 0 5px -1px rgba(0,0,0,0.2);
+    cursor:pointer;
+    vertical-align:middle;
+    max-width: 100px;
+    padding: 5px;
+    text-align: center;
+}
+.removeButton:active {
+    color:red;
+    box-shadow: 0 0 5px -1px rgba(0,0,0,0.6);
+}
+
+#updateSet {
+    display:inline-block;
+    color:#444;
+    border:1px solid #CCC;
+    background:#DDD;
+    box-shadow: 0 0 5px -1px rgba(0,0,0,0.2);
+    cursor:pointer;
+    vertical-align:middle;
+    max-width: 100px;
+    padding: 5px;
+    text-align: center;
+}
+
+#updateSet:active {
+    color:red;
+}

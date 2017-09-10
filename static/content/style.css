@@ -87,7 +87,7 @@
     color: #f58d1f ;
 }
 
-#lock-icon:active{
+#lock-icon:active, #setLock.fa-unlock-alt {
     color: #b55b1e;
 }
 
@@ -95,7 +95,7 @@
     color: #ff2549;
 }
 
-#unlock-icon:active{
+#unlock-icon:active,  #setLock.fa-lock {
     color: #c22338;
 }
 
@@ -127,3 +127,10 @@ table{
     margin-top:15px;
 }
 
+.show {
+    display: block !important;
+}
+
+.hide {
+    display: none !important;
+}

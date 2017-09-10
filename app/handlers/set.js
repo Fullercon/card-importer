@@ -1,6 +1,6 @@
 var helpers = require('./helpers.js'),
     requestModule = require('request'),
-    setData = require('../data/set.js'),
+    setDB = require('../data/set.js'),
     database = require('../data/database.js'),
     config = require('../local.config.js'),
     async = require('async');
@@ -20,13 +20,13 @@ exports.getSetByName = function (request, responseToSend) {
     async.waterfall(
         [
             function(callback){
-                setData.getSetByName(setName, callback)
+                setDB.getSetByName(setName, callback)
             },
 
             function(set, callback){
                 if(set === null){
                     console.log("No set was found in database with name " + setName + ". Trying API...");
-                    getCardByNameAPI(setName, callback);
+                    getSetByNameAPI(setName, callback);
                 } else if (set){
                     console.log(setName + " was found in database. Skipping API call...");
                     var transformedSetData = transformSetServerData(set);
@@ -39,7 +39,7 @@ exports.getSetByName = function (request, responseToSend) {
                 // console.log(transformedSetData.fetchedFromDB.toString());
                 if (!transformedSetData.fetchedFromDB) {
                     console.log('creating');
-                    setData.createSet(transformedSetData, callback);
+                    setDB.createSet(transformedSetData, callback);
                     // callback(null, transformedSetData);
                 } else {
                     console.log('notCreating');
@@ -63,7 +63,40 @@ exports.getSetByName = function (request, responseToSend) {
     );
 };
 
-function getCardByNameAPI (setName, callback) {
+exports.updateSetById = function (request, responseToSend) {
+    async.waterfall([
+        // make sure we have everything we need.
+        function (cb) {
+            if (!request.params || !request.params.setName) {
+                console.log("No setName parameter passed");
+                const missingParamsError = helpers.missing_params();
+                cb(missingParamsError);
+            }
+            else if (!request.body) {
+                cb(helpers.missing_data("POST data"));
+            }
+            else {
+                console.log('waterfall 1 done');
+                // get the album
+                cb(null, request.body)
+            }
+        },
+
+        function (setData, cb) {
+            setDB.updateSetById(setData, cb)
+        }
+    ],
+    function (err, result) {
+        if (err) {
+            helpers.send_failure(responseToSend, helpers.http_code_for_error(err), err);
+            return;
+        }
+        helpers.send_success(responseToSend, result);
+    });
+};
+
+
+function getSetByNameAPI (setName, callback) {
     console.log('API');
     console.log(setName);
     requestModule(config.config.base_api_url + 'set_data/' + setName, function (err, response, body) {
@@ -123,6 +156,7 @@ function transformSetDataAPI (setName, data){
         if (data.rarities.hasOwnProperty(d)) {
             var obj = {
                 rarity: d,
+                rarityNoSpaces: d.replace(/\s/g,''),
                 number: data.rarities[d]
             };
             rarities.push(obj);
@@ -132,12 +166,11 @@ function transformSetDataAPI (setName, data){
     data.cards.forEach(function (item) {
         item.numbers.forEach(function(numbers, index) {
             cardName = item.name;
-            console.log('dhjshdhsfhdsgfgdsgfjdgjsfgjdgsgfdhdf');
-            console.log(numbers.rarity);
             rarity = numbers.rarity;
             var obj = {
                 cardName: cardName,
-                rarity: rarity
+                rarity: rarity,
+                rarityNoSpaces: rarity.replace(/\s/g,'')
             };
             cards.push(obj);
             totalCards++;
