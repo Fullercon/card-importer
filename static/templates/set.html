@@ -1,54 +1,278 @@
+<link rel="stylesheet" href="http://localhost:8080/content/styles/set.css" type="text/css"/>
+
+<script>
+    $('#setLock').on('click', function () {
+        const $this = $(this);
+        debugger
+        if (/fa-lock/gi.test($this.attr('class'))) {
+            $('input').attr("readonly", false);
+        } else {
+            $('input').attr("readonly", true);
+        }
+
+        $('.rarityInput, .selectRarity, .removeButton, .viewCard, #updateSet, #plusButton').toggleClass('hide');
+        $('.cardName').toggleClass(('custom-read-only'));
+        $this.toggleClass('fa-lock');
+        $this.toggleClass('fa-unlock-alt');
+    });
+
+    $('.cardName').keyup(function () {
+        debugger
+        const $this = $(this);
+        const $submitButton = $('#updateSet');
+        const name = $this.val();
+        const $lock = $('#setLock');
+        debugger;
+
+        if (!validCardName(name)) {
+            $this.closest('.setCard').find('.invalidCardName').text('Invalid Card Name. Please enter a valid name');
+            $submitButton.prop('disabled', true);
+            $lock.prop('disabled', true);
+        } else if ($submitButton.prop('disabled')) {
+            $submitButton.prop('disbaled', false);
+            $lock.prop('disabled', false);
+            $this.closest('.setCard').find('.invalidCardName').text('');
+            findCardNameAndSet(name, $this)
+        } else {
+            findCardNameAndSet(name, $this)
+        }
+        setData['elementsUpdated'] = 1;
+    });
+
+    function findCardNameAndSet (name, $this) {
+        const positionOnPage = $this.closest('.setCard').index();
+        setData.cards[positionOnPage - 1].cardName = name;
+        $this.attr('value', name)
+    }
+
+    $('#plusButton').on('click', function () {
+        debugger
+        const $newRow = $(`
+           <div class="setCard row col-md-12 list-group-item list-group-item-danger">
+                    <div class="col-md-5">
+                        <label class="col-md-2 control-label">Name:</label>
+                        <div class="col-md-10">
+                            <input type="text" class="form-control cardName" value="">
+                        </div>
+                    </div>
+                    <div class="col-md-4 cardRarityArea">
+                        <label class="col-md-3 control-label">Rarity:</label>
+                        <div class="col-md-8 cardSelectRaritiesDiv">
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control custom-read-only rarityInput hide" value="">
+                        </div>
+                    </div>
+                    <div class="col-md-2 viewAll">
+                        <a href="" class="col-md-12 hide viewCard">View Card</a>
+                    </div>
+                    <div class="invalidCardName"></div>
+                     <div class="col-md-2 removeCard">
+                        <button class="col-md-12 removeButton">Remove Card</button>
+                    </div>
+                </div>
+          `);
+        const rarities = getAllRarities();
+        const $select = createSelectRarites(rarities);
+        $newRow.find('.cardSelectRaritiesDiv').append($select);
+        $('.setCard:last').after($newRow);
+        setData.totalCards++;
+        setData['elementsUpdated'] = 1;
+    });
+
+    $('.removeButton').on('click', function () {
+        debugger
+        const $rowOnPage = $(this).closest('.setCard');
+        const indexOfCardToBeRemoved = $rowOnPage.index() - 1;
+        const cards = setData.cards;
+        const setDataRarities = setData.rarities;
+        const setRaritiesNames = setDataRarities.map((obj) => {
+            return obj.rarity
+        });
+        if (indexOfCardToBeRemoved > -1 && indexOfCardToBeRemoved < cards.length) {
+            const rarity = cards[indexOfCardToBeRemoved].rarity;
+            cards.splice(indexOfCardToBeRemoved, 1);
+            if (rarity && setData) {
+                const rarityName = `.${rarity.replace(/ /g, '')}_number`;
+                const indexOfRarity = setRaritiesNames.indexOf(rarity);
+                setDataRarities[indexOfRarity].number--;
+                $(rarityName).text(setDataRarities[indexOfRarity].number);
+                setData.totalCards--;
+                $('#totalCards').text(setData.totalCards);
+            }
+        }
+        $rowOnPage.remove();
+        setData['elementsUpdated'] = 1;
+    });
+
+    $('#updateSet').on('click', (e) => {
+        if (setData.elementsUpdated) {
+            e.preventDefault();
+            updateSetAjax();
+        }
+    });
+
+    function getAllRarities () {
+        let allRarities = [];
+        if (setData && setData.rarities) {
+            for (let i = 0; i < setData.rarities.length; i++){
+                allRarities.push(setData.rarities[i].rarity);
+            }
+        }
+        return allRarities;
+    }
+
+    function createSelectRarites (allRarities) {
+        const $select = $(`
+            <select class="selectpicker form-control selectRarity">
+                <option value="" disabled="" selected="">${allRarities[0]}</option>
+            </select>`);
+        let optionsElement;
+        for(let i = 0; i < allRarities.length; i++) {
+            optionsElement = `<option value="${allRarities[i].replace(/\s/g,'')}">${allRarities[i]}</option>`;
+            $select.append(optionsElement);
+        }
+        return $select
+    }
+
+    function validCardName (name) {
+        return /[\.a-zA-Z0-9!' _:&-]/.test(name); // ^ means match chars not in this list
+    }
+
+    $('.selectRarity').on('change', function () {
+        const $this = $(this);
+        debugger;
+        const $previousValue = $this.closest('.cardRarityArea').find('.rarityInput');
+        const previousValueNoSpace = $previousValue.val().replace(/\s/g,'');
+        const changeValue = $this.find(":selected").text();
+        const changeValueNoSpace = changeValue.replace(/\s/g,'');
+        if (previousValueNoSpace !== changeValueNoSpace) {
+            const $previousRarityNumber =  $(`[rarityNumber="${previousValueNoSpace}_number"]`);
+            const $newRarityNumber = $(`[rarityNumber="${changeValueNoSpace}_number"]`);
+            let prevRarityInt = parseInt($previousRarityNumber.text().trim()) || 0;
+            prevRarityInt--;
+            let newRarityInt = parseInt($newRarityNumber.text().trim()) || 0;
+            newRarityInt++;
+            $previousRarityNumber.text(prevRarityInt);
+            $newRarityNumber.text(newRarityInt);
+            $previousValue.val(changeValueNoSpace);
+        }
+        if (!setData) setData['elementsUpdated'] = 2;
+        else if (setData['elementsUpdated'] > 2) setData['elementsUpdated'] = 2;
+
+    });
+
+    function updateSetAjax () {
+        const dateString = sortDate();
+        setData.updateDate = dateString;
+        $('.updateData').text(dateString);
+        const json = JSON.stringify(setData);
+
+        $.ajax({
+            type: "PUT",
+            url: `/v1/set/${setData._id}.json`,
+            contentType: 'application/json',    // request payload type
+            "content-type": "application/json",   // what we want back
+            data: json,
+            success: function (resp) {
+                window.location.reload();
+            }
+        });
+    }
+
+    function sortDate () {
+        const m = new Date();
+        const dateString =
+            m.getUTCFullYear() +"/"+
+            ("0" + (m.getUTCMonth()+1)).slice(-2) +"/"+
+            ("0" + m.getUTCDate()).slice(-2) + " " +
+            ("0" + m.getUTCHours()).slice(-2) + ":" +
+            ("0" + m.getUTCMinutes()).slice(-2) + ":" +
+            ("0" + m.getUTCSeconds()).slice(-2);
+
+        return dateString;
+    }
+</script>
+
 <div class="jumbotron">
     <div class="container">
-        <form class="form-horizontal paddingTest">
-            <h1>{{_id}}  <span id="setLock" class="glyphicon glyphicon-lock" aria-hidden="true"></span></h1>
+
+            <h1>{{_id}}  <span id="setLock" class="fa fa-lock" aria-hidden="true"></span></h1>
             <p>
                 {{#fetchedFromDB}}
-                Set was found and loaded from database. Inserted: {{insertDate}}. Last updated: {{updateDate}}.
+                Set was found and loaded from database. Inserted: <p>{{insertDate}}</p>. Last updated: <p> class="updateData">{{updateDate}}<p>.
                 {{/fetchedFromDB}}
                 {{^fetchedFromDB}} Set was not found in database, loaded from API. Inserted: {{insertDate}}.{{/fetchedFromDB}}
             </p>
             <div class="row">
                 <div class="row col-md-8">
-                    <label for="totalCards" class="col-md-2 control-label">Total Cards:</label>
-                    <div class="col-md-3">
-                        <input type="text" class="form-control custom-read-only" id="totalCards" value="{{totalCards}}" readonly>
+                    <label for="totalCards" class="col-md-3 control-label">Total Cards:</label>
+                    <div class="col-md-1">
+                        <p id="totalCards"> {{totalCards}} </p>
                     </div>
                 </div>
                 <div class="row col-md-8">
                     <h3>Rarities:</h3>
-                        {{#rarities}}
-                            <label class="col-md-2 control-label">{{rarity}}</label>
-                            <div class="col-md-3">
-                                <input type="text" class="form-control custom-read-only" class="rarities" value="{{number}}" readonly>
-                            </div>
-                        {{/rarities}}
-                        {{^rarities}}
-                            There are no cards in this sets.
-                        {{/rarities}}
-                    </ul>
+                    {{#rarities}}
+                        <label class="col-md-3 control-label" id="{{rarityNoSpaces}}_rarity">{{rarity}}</label>
+                        <div class="col-md-1">
+                            <p class="{{rarityNoSpaces}}_number"> {{number}} </p>
+                        </div>
+                    {{/rarities}}
+                    {{^rarities}}
+                        There are no cards in this sets.
+                    {{/rarities}}
                 </div>
 
                 <div class="row col-md-12">
                     <h3>Cards:</h3>
                     {{#cards}}
-                    <div class="row col-md-12 list-group-item list-group-item-{{#imported}}success{{/imported}}{{^imported}}danger{{/imported}}">
-                        <label class="col-md-1 control-label">Name:</label>
-                        <div class="col-md-4">
-                            <input type="text" class="form-control custom-read-only" class="cardName" value="{{cardName}}" readonly>
+                    <div class="setCard row col-md-12 list-group-item list-group-item-{{#imported}}success{{/imported}}{{^imported}}danger{{/imported}}">
+                        <div class="col-md-5">
+                            <label class="col-md-2 control-label">Name:</label>
+                            <div class="col-md-10">
+                                <input type="text" class="form-control custom-read-only cardName" value="{{cardName}}" readonly>
+                            </div>
                         </div>
-                        <label class="col-md-1 control-label">Rarity:</label>
-                        <div class="col-md-3">
-                            <input type="text" class="form-control custom-read-only" class="cardRarity" value="{{rarity}}" readonly>
+                        <div class="col-md-4 cardRarityArea">
+                            <label class="col-md-3 control-label">Rarity:</label>
+                            <div class="col-md-8 cardSelectRaritiesDiv">
+                                <select class="selectpicker form-control hide selectRarity">
+                                    <option value="" disabled selected>{{rarity}}</option>
+                                    {{#rarities}}
+                                    <option value={{rarityNoSpaces}}>{{rarity}}</option>
+                                    {{/rarities}}
+                                    {{^rarities}}
+                                    <option value="{{rarityNoSpaces}}" selected>{{rarity}}</option>
+                                    {{/rarities}}
+                                </select>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control custom-read-only rarityInput" value="{{rarity}}" readonly>
+                            </div>
                         </div>
-                        <a href="/pages/card/{{cardName}}" class="col-md-2">View Card</a>
+                        <div class="col-md-2 viewCard">
+                            <a href="/pages/card/{{cardName}}" class="col-md-12">View Card</a>
+                        </div>
+                        <div class="col-md-2 removeCard">
+                            <div class="col-md-12 hide removeButton">Remove Card</div>
+                        </div>
                     </div>
                     {{/cards}}
                     {{^cards}}
                     There are no cards in this sets.
                     {{/cards}}
                 </div>
+
+                <div class="row col-md-12 hide" id="plusButton"></div>
+
+                <div class="row col-md-12">
+                    <div class="col-md-4">
+                        <div id="updateSet" class='hide'> Update Set </div>
+                    </div>
+                </div>
+
             </div>
-        </form>
+
     </div>
 </div>

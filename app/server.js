@@ -11,10 +11,9 @@ var helpers = require('./handlers/helpers.js'),
 app.use(express.static(__dirname + "/../static"));
 app.use(express.bodyParser());
 
-//hello
-console.log('test');
 app.get('/v1/sets.json', sets.getAllSets);
 app.get('/v1/set/:setName.json', set.getSetByName);
+app.put('/v1/set/:setName.json', set.updateSetById);
 
 app.get('/v1/card/:cardName.json', card.getCardByName);
 app.put('/v1/import/cardImage.json', card.importCardImage);

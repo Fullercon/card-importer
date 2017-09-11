@@ -43,7 +43,7 @@ exports.createSet = function (data, callback) {
         function (setData, cb) {
             console.log('createSet2');
             console.log(JSON.parse(JSON.stringify(setData)));
-            var write = JSON.parse(JSON.stringify(setData));
+            const write = JSON.parse(JSON.stringify(setData));
             write._id = setData._id;
             db.sets.insertOne(write, { w: 1, safe: true }, cb);
         },
@@ -91,6 +91,89 @@ exports.getSetByName = function (setName, callback) {
         }
     })
 };
+
+exports.updateSetById = function (data, callback) {
+    console.log('update set db');
+    async.waterfall([
+        // validate data
+        function (cb) {
+            console.log('backupparse');
+            console.log(JSON.parse(JSON.stringify(data)));
+            try {
+                backhelp.verify(data,
+                    [ "_id",
+                        "totalCards",
+                        "rarities",
+                        "imageName",
+                        "cards",
+                        "insertDate",
+                        "updateDate",
+                        'elementsUpdated'
+                    ]);
+            } catch (e) {
+                cb(e);
+                return;
+            }
+            cb(null, data);
+        },
+
+        function (setData, cb) {
+            console.log('checking');
+            const updatedSetData = JSON.parse(JSON.stringify(setData));
+            console.log(updatedSetData.elementsUpdated);
+            if (updatedSetData.elementsUpdated === 1) {
+                console.log('updateEverything');
+                delete updatedSetData['elementsUpdated'];
+                updateFullSet(updatedSetData);
+            }
+            else if (updatedSetData.elementsUpdated === 2)  {
+                delete updatedSetData['elementsUpdated'];
+                updateRarities(updatedSetData);
+            }
+
+            cb(null, updatedSetData)
+        }
+        ],
+        function (err, results) {
+            // convert file errors to something we like.
+            if (err) {
+                console.log('error has occured 1111');
+                console.log(err);
+                callback(err);
+            } else {
+                data ? callback(null, data) : callback(null, null)
+            }
+        });
+
+};
+
+function updateFullSet(updatedSetData) {
+    console.log('updating full set :)');
+    console.log(updatedSetData);
+    db.sets.update(
+        {'_id': updatedSetData._id},
+        {
+            $set: {
+                updatedSetData
+                //cards: updatedSetData.cards
+            }
+        }
+    )
+}
+
+function updateRarities(updatedSetData) {
+    console.log('updating set rarities :)');
+    db.sets.update(
+        {'_id': updatedSetData._id},
+        {
+            $set: {
+                rarities: updatedSetData.rarities,
+                cards: updatedSetData.cards,
+                updateDate: updatedSetData.updateDate
+            }
+        }
+    )
+}
 
 function invalidSetName() {
     return backhelp.error("invalidSetName",

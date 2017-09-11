@@ -48,3 +48,14 @@ exports.missing_data = function(data_field){
 exports.file_error = function(err){
     return exports.make_error("file_error", JSON.stringify(err));
 };
+
+
+exports.http_code_for_error = function (err) {
+    switch (err.code) {
+        case "no_such_album":
+            return 403;
+        case "invalid_resource":
+            return 404;
+    }
+    return 503;
+}

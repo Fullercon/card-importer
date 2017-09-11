@@ -1,11 +1,12 @@
 /**
  * Created by Jack on 17/06/2017.
  */
+let setData;
 $(function(){
     var template, //main template html
         templateData = {}; //JSON data object that 'feeds' the template
     console.log('Loading set page template');
-
+    // var data111 = JSON.parse(JSON.stringify(d.data));
     // Initialise the page
     var initPage = function(){
         var urlParts = window.location.href.split('/');
@@ -20,7 +21,7 @@ $(function(){
         // Retrieve the server data and then initialise the page
         $.getJSON("/v1/set/" + setName + ".json", function(d){
             $.extend(templateData, d.data);
-            console.log(JSON.parse(JSON.stringify(d.data)))
+            setData = JSON.parse(JSON.stringify(d.data));
         });
 
          // After all AJAX calls have finished, parse the template
@@ -32,15 +33,3 @@ $(function(){
     }();
 });
 
-$('#setLock').on('click', function () {
-    const $this = $(this);
-    if (/glyphicon-lock/i.test($this.selector)) {
-        $this.removeClass('glyphicon-lock');
-        $this.addClass('glyphicon-unlock');
-        $('input').prop('disabled', false);
-    } else {
-        $this.removClass('glyphicon-unlock');
-        $this.addClass('glyphicon-lock');
-        $('input').prop('disabled', true);
-    }
-});
